@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/workspaces/codespaces-blank/build",
+  "command": "/usr/bin/c++   -I/workspaces/codespaces-blank/include  -g   -std=gnu++17 -o CMakeFiles/search.dir/src/main.cpp.o -c /workspaces/codespaces-blank/src/main.cpp",
+  "file": "/workspaces/codespaces-blank/src/main.cpp"
+}
+]
