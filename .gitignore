@@ -1,5 +1,6 @@
 .*
 !.gitignore
-Data/
+Data/L1/*
 __pycache__
 database.db
+AIDA.code-workspace
