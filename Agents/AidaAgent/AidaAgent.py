@@ -1,5 +1,6 @@
 from Agents.BaseAgent import BaseAgent
-from . import system_message
+from . system_message import system_message
+from . few_shot_examples import few_shot_examples
 from langchain.agents import create_agent
 
 class AidaAgent(BaseAgent):
@@ -17,6 +18,7 @@ class AidaAgent(BaseAgent):
     
     def __init__(self):
         super().__init__(
-            agent_tools=[self.web_search, self.get_AIDA_files, self.execute_sql_query],
-            system_prompt=system_message.system_message
+            agent_tools=[self.web_search, self.get_AIDA_files],
+            system_prompt=system_message,
+            few_shot_examples=few_shot_examples,
         )
