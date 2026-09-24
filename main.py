@@ -18,7 +18,7 @@ class CLI:
         if self.user_input == "exit":
             pass
         elif self.user_input == "-1":
-            self.context_manager.create_conversation()
+            self.current_conversation_id = self.context_manager.create_conversation()
         else:
             self.current_conversation_id = self.user_input
             self.load_conversation()
@@ -31,9 +31,19 @@ class CLI:
             else:
                 messages = self.context_manager.construct_context(self.current_conversation_id, self.user_input)
                 response = agent.invoke_agent(messages)
-                print("AIDA response: ", response['messages'][-1].content)
-                self.context_manager.save_message("CONVERSATIONAL", "AIDA", self.current_conversation_id, response['messages'][-1].content)
-                print("AIDA: ", response['messages'][-1].content)
+                print("AIDA response: ", response)
+                for message in response:
+                    message_type, sender, content, summary = message
+
+                    print("saving message:", message)
+
+                    self.context_manager.save_message(
+                        message_type,
+                        sender,
+                        self.current_conversation_id,
+                        content
+                    )
+                    
     
     def load_conversations(self):
         conversations = self.context_manager.get_conversations()

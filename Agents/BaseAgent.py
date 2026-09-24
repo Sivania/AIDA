@@ -10,7 +10,7 @@ class BaseAgent:
         self.messages.append(message)
 
 
-    def convert_messages(self, messages):
+    def convert_messages_to_langchain_messages(self, messages):
         converted_messages = []
         for message in messages:
             if message[1] == "user":
@@ -21,6 +21,20 @@ class BaseAgent:
                 converted_messages.append(SystemMessage(content=message[2]))
             else:
                 raise ValueError(f"Unknown message sender: {message[1]}")
+        return converted_messages
+
+    def convert_messages_to_list(self, messages):
+        # Convert langchain messages back to [type, sender, content, none] list format
+        converted_messages = []
+        for message in messages:
+            if isinstance(message, HumanMessage):
+                converted_messages.append(["CONVERSATIONAL", "user", message.content, None])
+            elif isinstance(message, AIMessage):
+                converted_messages.append(["CONVERSATIONAL", "AIDA", message.content, None])
+            elif isinstance(message, SystemMessage):
+                converted_messages.append(["LOGGING", "system", message.content, None])
+            else:
+                raise ValueError(f"Unknown message type: {type(message)}")
         return converted_messages
 
     def reply(self, text):
@@ -41,10 +55,12 @@ class BaseAgent:
             self.add_message(x)
 
     def invoke_agent(self, messages):
-        converted_messages = self.convert_messages(messages)
+        converted_messages = self.convert_messages_to_langchain_messages(messages)
         messages = self.agent.invoke(
             {"messages": converted_messages},
             config={"recursion_limit": self.iterations},
         )
-        print("Agent invoked with messages:", messages)
-        return messages
+        new_messages = messages['messages'][len(converted_messages)-1:]
+        new_messages = self.convert_messages_to_list(new_messages)
+        print("new", new_messages)
+        return new_messages
