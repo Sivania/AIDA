@@ -1,7 +1,7 @@
 
 from langchain.agents import create_agent
 from dotenv import load_dotenv
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage
 
 load_dotenv()
 
@@ -12,29 +12,131 @@ class BaseAgent:
 
     def convert_messages_to_langchain_messages(self, messages):
         converted_messages = []
-        for message in messages:
-            if message[1] == "user":
-                converted_messages.append(HumanMessage(content=message[2]))
-            elif message[1] == "assistant" or message[1] == "AIDA":
-                converted_messages.append(AIMessage(content=message[2]))
-            elif message[1] == "system":
-                converted_messages.append(SystemMessage(content=message[2]))
-            else:
-                raise ValueError(f"Unknown message sender: {message[1]}")
-        return converted_messages
 
-    def convert_messages_to_list(self, messages):
-        # Convert langchain messages back to [type, sender, content, none] list format
-        converted_messages = []
         for message in messages:
-            if isinstance(message, HumanMessage):
-                converted_messages.append(["CONVERSATIONAL", "user", message.content, None])
-            elif isinstance(message, AIMessage):
-                converted_messages.append(["CONVERSATIONAL", "AIDA", message.content, None])
-            elif isinstance(message, SystemMessage):
-                converted_messages.append(["LOGGING", "system", message.content, None])
+            print("converting current message:", message)
+
+            message_type = message[0]
+            sender = message[1]
+            content = message[2]
+            metadata = message[4]
+
+            if message_type == "TOOL_CALL":
+                converted_messages.append(
+                    AIMessage(
+                        content=content,
+                        tool_calls=metadata["tool_calls"]
+                    )
+                )
+
+            elif message_type == "TOOL_RESULT":
+                converted_messages.append(
+                    ToolMessage(
+                        name=metadata.get("tool_name"),
+                        content=content,
+                        tool_call_id=metadata["tool_call_id"]
+                    )
+                )
+
+            elif sender == "user":
+                converted_messages.append(
+                    HumanMessage(content=content)
+                )
+
+            elif sender in ("assistant", "AIDA"):
+                converted_messages.append(
+                    AIMessage(content=content)
+                )
+
+            elif sender == "system":
+                converted_messages.append(
+                    SystemMessage(content=content)
+                )
+
             else:
-                raise ValueError(f"Unknown message type: {type(message)}")
+                raise ValueError(
+                    f"Unknown message: {message}"
+                )
+
+        return converted_messages
+    def convert_messages_to_list(self, messages):
+        converted_messages = []
+
+        for message in messages:
+            print("message type:", type(message))
+            print("message content:", message)
+
+            if isinstance(message, HumanMessage):
+                converted_messages.append([
+                    "CONVERSATIONAL",
+                    "user",
+                    message.content,
+                    None,
+                    None
+                ])
+
+            elif isinstance(message, AIMessage):
+
+                # This AI message is requesting tools
+                if message.tool_calls:
+                    metadata = {
+                        "tool_calls": [
+                            {
+                                "name": tool_call["name"],
+                                "args": tool_call["args"],
+                                "id": tool_call["id"],
+                                "type": "tool_call"
+                            }
+                            for tool_call in message.tool_calls
+                        ]
+                    }
+
+                    converted_messages.append([
+                        "TOOL_CALL",
+                        "AIDA",
+                        message.content,
+                        None,
+                        metadata
+                    ])
+
+                # Ordinary AIDA response
+                elif message.content:
+                    converted_messages.append([
+                        "CONVERSATIONAL",
+                        "AIDA",
+                        message.content,
+                        None,
+                        None
+                    ])
+
+            elif isinstance(message, ToolMessage):
+                metadata = {
+                    "tool_call_id": message.tool_call_id,
+                    "tool_name": message.name
+                }
+
+                converted_messages.append([
+                    "TOOL_RESULT",
+                    message.name or "tool",
+                    message.content,
+                    None,
+                    metadata
+                ])
+
+            elif isinstance(message, SystemMessage):
+                converted_messages.append([
+                    "LOGGING",
+                    "system",
+                    message.content,
+                    None,
+                    None
+                ])
+
+            else:
+                raise ValueError(
+                    f"Unknown message type: {type(message)}"
+                )
+
         return converted_messages
 
     def reply(self, text):
@@ -47,7 +149,7 @@ class BaseAgent:
 
         self.agent = create_agent(
             model=model,
-            tools=[self.web_search] + agent_tools,
+            tools=agent_tools,
             system_prompt=system_prompt,
         )
         

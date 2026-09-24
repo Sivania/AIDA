@@ -1,3 +1,5 @@
+import json
+
 from ContextManager.ContextBuilder import ContextBuilder
 from ContextManager.ConversationRepository import ConversationRepository
 
@@ -21,12 +23,14 @@ class ContextManager:
                 message["type"],
                 message["sender"],
                 message["content"],
-                None
+                message["summary"],
+                json.loads(message["metadata"]) if message["metadata"] else None
             )
             for message in messages
         ]
         messages = self.context_builder.build_context_window_with_new_prompt(messages, prompt)
         return messages
     
-    def save_message(self, type, sender, conversation_id, content):
-        self.conversation_repository.create_message(type, sender, conversation_id, content)
+    def save_message(self, type, sender, conversation_id, content, summary, metadata):
+        metadata_json = (json.dumps(metadata) if metadata is not None else None)
+        self.conversation_repository.create_message(type, sender, conversation_id, content, summary, metadata_json)

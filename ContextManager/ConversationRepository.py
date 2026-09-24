@@ -16,10 +16,12 @@ class ConversationRepository:
         self.database.execute_write("""
             CREATE TABLE IF NOT EXISTS messages (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                type TEXT NOT NULL DEFAULT 'CONVERSATIONAL',
-                sender TEXT NOT NULL DEFAULT 'user',
-                conversation_id INTEGER,
+                type TEXT NOT NULL,
+                sender TEXT NOT NULL,
+                conversation_id INTEGER NOT NULL,
                 content TEXT NOT NULL,
+                summary TEXT,
+                metadata TEXT,
                 created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (conversation_id) REFERENCES conversations (id)
             )
@@ -43,8 +45,8 @@ class ConversationRepository:
     def create_conversation(self, title: str = "New conversation"):
         return self.database.execute_write("""INSERT INTO conversations (title)VALUES (?)""", (title,))
     
-    def create_message(self, type, sender, conversation_id: int, content: str):
+    def create_message(self, type, sender, conversation_id: int, content: str, summary: str, metadata: str):
         self.database.execute_write("""
-            INSERT INTO messages (type, sender, conversation_id, content)
-            VALUES (?, ?, ?, ?)
-        """, (type, sender, conversation_id, content))
+            INSERT INTO messages (type, sender, conversation_id, content, summary, metadata)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (type, sender, conversation_id, content, summary, metadata))

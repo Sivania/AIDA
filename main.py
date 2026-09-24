@@ -33,15 +33,17 @@ class CLI:
                 response = agent.invoke_agent(messages)
                 print("AIDA response: ", response)
                 for message in response:
-                    message_type, sender, content, summary = message
+                    type, sender, content, summary, metadata = message
 
                     print("saving message:", message)
 
                     self.context_manager.save_message(
-                        message_type,
+                        type,
                         sender,
                         self.current_conversation_id,
-                        content
+                        content,
+                        summary,
+                        metadata
                     )
                     
     
