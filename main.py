@@ -4,9 +4,6 @@ from Database.Database import Database
 
 agent = AidaAgent()
 class CLI:
-    '''
-    A simple command-line interface (CLI) for interacting with the AIDA agent.
-    '''
     def __init__(self):
         self.running = True
         self.database = Database("database.db")
@@ -28,12 +25,15 @@ class CLI:
                 
         while self.running:
             self.user_input = input("You: ")
-            messages = self.context_manager.construct_context(self.current_conversation_id, self.user_input)
+
             if self.user_input == "exit":
                 self.running = False
             else:
-                response = agent.invoke_agent(messages, self.user_input)
-                print("AIDA: ", response)
+                messages = self.context_manager.construct_context(self.current_conversation_id, self.user_input)
+                response = agent.invoke_agent(messages)
+                print("AIDA response: ", response['messages'][-1].content)
+                self.context_manager.save_message("CONVERSATIONAL", "AIDA", self.current_conversation_id, response['messages'][-1].content)
+                print("AIDA: ", response['messages'][-1].content)
     
     def load_conversations(self):
         conversations = self.context_manager.get_conversations()

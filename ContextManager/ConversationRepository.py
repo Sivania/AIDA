@@ -41,10 +41,10 @@ class ConversationRepository:
         """, (conversation_id,))
 
     def create_conversation(self, title: str = "New conversation"):
-        self.database.execute_write("""INSERT INTO conversations (title)VALUES (?)""", (title,))
+        return self.database.execute_write("""INSERT INTO conversations (title)VALUES (?)""", (title,))
     
-    def create_message(self, conversation_id: int, content: str):
+    def create_message(self, type, sender, conversation_id: int, content: str):
         self.database.execute_write("""
-            INSERT INTO messages (conversation_id, content)
-            VALUES (?, ?)
-        """, (conversation_id, content))
+            INSERT INTO messages (type, sender, conversation_id, content)
+            VALUES (?, ?, ?, ?)
+        """, (type, sender, conversation_id, content))

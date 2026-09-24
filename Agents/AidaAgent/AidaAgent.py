@@ -1,7 +1,6 @@
 from Agents.BaseAgent import BaseAgent
 from . system_message import system_message
 from . few_shot_examples import few_shot_examples
-from langchain.agents import create_agent
 
 class AidaAgent(BaseAgent):
     def web_search(self, query: str) -> str:
