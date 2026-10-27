@@ -17,7 +17,7 @@ class AidaAgent(BaseAgent):
     
     def __init__(self):
         super().__init__(
-            agent_tools=[self.web_search, self.get_AIDA_files],
+            agent_tools=[],
             system_prompt=system_message,
             few_shot_examples=few_shot_examples,
         )
