@@ -3,7 +3,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from .. import Database
+from Database.Database import Database
 
 
 def test_concurrent_reads_and_writes(tmp_path: Path) -> None:
