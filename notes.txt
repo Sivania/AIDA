@@ -1,0 +1,20 @@
+setup API
+
+py install 3.14
+py -V:3.14 -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+
+
+
+
+
+Structure:
+
+Root:
+    Agents: Tools and agents.
+    ContextManager: Retrieves memory and loads conversations as well as compact.
+    Data: L1/L2/L3/L4 memory.
+    Database: Creates and gives methods for interact with the single database.
+    main.py: CLI
+
