@@ -7,6 +7,7 @@ class CLI:
     def __init__(self):
         self.running = True
         self.database = Database("database.db")
+        self.planner_db = Database("planner.db")
         self.context_manager = ContextManager(self.database)
         self.current_conversation_id = None
         self.user_input = None
