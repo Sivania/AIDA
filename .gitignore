@@ -4,3 +4,5 @@ Data/L1/*
 __pycache__
 database.db
 AIDA.code-workspace
+database.db-shm
+database.db-wal
