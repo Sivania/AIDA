@@ -1,17 +1,19 @@
 from Agents.AidaAgent.AidaAgent import AidaAgent
-from Apps import Apps
+from Apps.Apps import Apps    
 from ContextManager.ContextManager import ContextManager
 from Database.Database import Database
 
-agent = AidaAgent()
+
 class CLI:
     def __init__(self):
         self.running = True
         self.database = Database("database.db")
         self.apps = Apps(self.database)
+        self.agent = AidaAgent(self.apps.tools())
         self.context_manager = ContextManager(self.database)
         self.current_conversation_id = None
         self.user_input = None
+
         
     def start(self):
         self.load_conversations()
@@ -32,7 +34,7 @@ class CLI:
                 self.running = False
             else:
                 messages = self.context_manager.construct_context(self.current_conversation_id, self.user_input)
-                response = agent.invoke_agent(messages)
+                response = self.agent.invoke_agent(messages)
                 print("AIDA response: ", response)
                 for message in response:
                     type, sender, content, summary, metadata = message

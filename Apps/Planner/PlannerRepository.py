@@ -181,3 +181,6 @@ class PlannerRepository:
             SET status = ?, updated_by = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
             WHERE id = ?
         """, (status, updated_by, lane_id))
+        
+    def execute_query(self, query, params=None):
+        return self.database.execute_query(query, params)

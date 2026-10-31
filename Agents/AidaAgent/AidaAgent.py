@@ -14,10 +14,6 @@ class AidaAgent(BaseAgent):
             read_file (bool): If single file is chosen, set true to read the contents of the file.
         """
         return "Not inplemented yet"
-    
-    def __init__(self):
-        super().__init__(
-            agent_tools=[],
-            system_prompt=system_message,
-            few_shot_examples=few_shot_examples,
-        )
+
+    def __init__(self, tools):
+        super().__init__(agent_tools=tools, system_prompt=system_message, few_shot_examples=few_shot_examples)
