@@ -1,4 +1,4 @@
-setup API
+setup API OPENAI_API_KEY=
 
 py install 3.14
 py -V:3.14 -m venv .venv
