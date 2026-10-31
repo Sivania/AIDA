@@ -7,4 +7,5 @@ class Apps:
         return self.planner.tools()
     
     def context(self):
-        return self.planner.get_context()
+        print("App content")
+        return self.planner.get_app_context()

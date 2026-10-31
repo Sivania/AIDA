@@ -17,11 +17,20 @@ class Planner:
     
     def update_task(self, task_id, updated_by, lane_id=None, title=None, description=None, status=None, labels=None, depends_on=None, due_date=None, done_date=None):
         return self.conversation_repository.update_task(task_id, updated_by, lane_id, title, description, status, labels, depends_on, due_date, done_date)
+
+    def find_tasks(self, lane_id=None, status=None):
+        return self.conversation_repository.find_tasks(lane_id, status)
+
+    def get_task(self, task_id):
+        return self.conversation_repository.get_task(task_id)
+
+    def get_lanes(self, status=None):
+        return self.conversation_repository.get_lanes(status)
     
     def tools(self):
         return self.planner_tools.tools()
     
-    def get_context(self, due_within_days=7):
+    def get_app_context(self, due_within_days=7):
         today = datetime.now(timezone.utc).date()
         due_limit = (today + timedelta(days=due_within_days)).isoformat()
         query = self.conversation_repository.execute_query

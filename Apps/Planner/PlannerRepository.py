@@ -182,5 +182,30 @@ class PlannerRepository:
             WHERE id = ?
         """, (status, updated_by, lane_id))
         
+    def find_tasks(self, lane_id=None, status=None):
+        query = "SELECT * FROM tasks WHERE status != 'deleted'"
+        parameters = []
+        if lane_id is not None:
+            query += " AND lane_id = ?"
+            parameters.append(lane_id)
+        if status is not None:
+            query += " AND status = ?"
+            parameters.append(status)
+        query += " ORDER BY id"
+        return self.database.execute_read(query, tuple(parameters))
+
+    def get_task(self, task_id):
+        rows = self.database.execute_read("SELECT * FROM tasks WHERE id = ?", (task_id,))
+        return rows[0] if rows else None
+
+    def get_lanes(self, status=None):
+        query = "SELECT * FROM lanes WHERE status != 'deleted'"
+        parameters = []
+        if status is not None:
+            query += " AND status = ?"
+            parameters.append(status)
+        query += " ORDER BY position"
+        return self.database.execute_read(query, tuple(parameters))
+    
     def execute_query(self, query, params=None):
         return self.database.execute_query(query, params)
