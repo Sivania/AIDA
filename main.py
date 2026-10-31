@@ -1,4 +1,5 @@
 from Agents.AidaAgent.AidaAgent import AidaAgent
+from Apps import Apps
 from ContextManager.ContextManager import ContextManager
 from Database.Database import Database
 
@@ -7,7 +8,7 @@ class CLI:
     def __init__(self):
         self.running = True
         self.database = Database("database.db")
-        self.planner_db = Database("planner.db")
+        self.apps = Apps(self.database)
         self.context_manager = ContextManager(self.database)
         self.current_conversation_id = None
         self.user_input = None
