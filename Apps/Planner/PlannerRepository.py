@@ -208,4 +208,4 @@ class PlannerRepository:
         return self.database.execute_read(query, tuple(parameters))
     
     def execute_query(self, query, params=None):
-        return self.database.execute_query(query, params)
+        return self.database.execute_read(query, params or ())

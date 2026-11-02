@@ -4,9 +4,11 @@ from ContextManager.ContextBuilder import ContextBuilder
 from ContextManager.ConversationRepository import ConversationRepository
 
 class ContextManager:
-    def __init__(self, database):
+    def __init__(self, database, apps):
         self.conversation_repository = ConversationRepository(database)
         self.context_builder = ContextBuilder()
+        self.apps = apps
+
     def get_conversations(self):
         return self.conversation_repository.get_conversations()
     
@@ -28,6 +30,10 @@ class ContextManager:
             )
             for message in messages
         ]
+        # Add context string from apps to message
+        app_context = self.apps.context()
+        messages = messages + [("CONTEXT", "system", app_context, None, None)]
+        print("\n\nConstructed context messages:", app_context)
         messages = self.context_builder.build_context_window_with_new_prompt(messages, prompt)
         return messages
     

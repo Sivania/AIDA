@@ -11,10 +11,10 @@ class CLI:
     def __init__(self):
         self.running = True
         DATA_DIR = Path(os.environ["AIDA_DATA_DIR"])
-        self.database = Database(DATA_DIR / "conversations.db")
+        self.database = Database(DATA_DIR / "data.db")
         self.apps = Apps(self.database)
         self.agent = AidaAgent(self.apps.tools())
-        self.context_manager = ContextManager(self.database)
+        self.context_manager = ContextManager(self.database, self.apps)
         self.current_conversation_id = None
         self.user_input = None
 
