@@ -1,5 +1,8 @@
+import os
+
 from Agents.AidaAgent.AidaAgent import AidaAgent
-from Apps.Apps import Apps    
+from Apps.Apps import Apps   
+from pathlib import Path
 from ContextManager.ContextManager import ContextManager
 from Database.Database import Database
 
@@ -7,7 +10,8 @@ from Database.Database import Database
 class CLI:
     def __init__(self):
         self.running = True
-        self.database = Database("database.db")
+        DATA_DIR = Path(os.environ["AIDA_DATA_DIR"])
+        self.database = Database(DATA_DIR / "conversations.db")
         self.apps = Apps(self.database)
         self.agent = AidaAgent(self.apps.tools())
         self.context_manager = ContextManager(self.database)
