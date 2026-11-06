@@ -1,8 +1,20 @@
+# Hidden files (also covers .env and .env.local)
 .*
 !.gitignore
-Data/L1/*
+!.github/
+
+# Python
 __pycache__
-database.db
+
+# Data and databases
+Data/L1/*
+*.db
+*.db-shm
+*.db-wal
+
+# Editor
 AIDA.code-workspace
-database.db-shm
-database.db-wal
+
+# Frontend
+node_modules/
+dist/
