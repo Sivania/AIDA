@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { getConversations, sendToAida } from '../api/aida'
+import { createConversation, getConversations, getMessages, sendToAida } from '../api/aida'
 import type { AssistantState, ChatConversation, ChatMessage } from '../types/chat'
 
 // Replies arrive whole. They're revealed over at most this long so the
@@ -20,12 +20,14 @@ export function useChat() {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [assistantState, setAssistantState] = useState<AssistantState>('idle')
   const [error, setError] = useState<string | null>(null)
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false)
 
   const abortRef = useRef<AbortController | null>(null)
   const revealRef = useRef<Reveal | null>(null)
 
   const activeConversation = conversations.find((c) => c.id === activeId) ?? null
-  const isBusy = assistantState !== 'idle'
+  // Sending is blocked while history loads, so a new message can't be overwritten by it.
+  const isBusy = assistantState !== 'idle' || isLoadingMessages
 
   // Load the conversation list once when the page opens.
   useEffect(() => {
@@ -35,7 +37,7 @@ export function useChat() {
       .then((list) => {
         // StrictMode runs this effect twice in development; only the second run may land.
         if (controller.signal.aborted) return
-        // Titles only for now. Messages come from the server once it has an endpoint for them.
+        // Titles only. A conversation's messages are loaded when you open it.
         const loaded = list.map((c) => ({ id: String(c.id), title: c.title, messages: [] }))
         setConversations((current) => [...current, ...loaded])
       })
@@ -68,6 +70,7 @@ export function useChat() {
     abortRef.current = null
     revealRef.current?.finish()
     setAssistantState('idle')
+    setIsLoadingMessages(false)
   }
 
   function newChat() {
@@ -80,6 +83,29 @@ export function useChat() {
     stop()
     setActiveId(id)
     setError(null)
+
+    // A local- conversation was never created on the server, so there's nothing to load.
+    if (id.startsWith('local-')) return
+
+    // Load every time it's opened, so messages sent from another device show up too.
+    const controller = new AbortController()
+    abortRef.current = controller
+    setIsLoadingMessages(true)
+
+    getMessages(id, controller.signal)
+      .then((messages) => {
+        if (controller.signal.aborted) return
+        setMessages(id, messages)
+      })
+      .catch((err) => {
+        if (controller.signal.aborted) return
+        setError(`Could not load this conversation. ${err instanceof Error ? err.message : ''}`)
+      })
+      .finally(() => {
+        if (abortRef.current !== controller) return
+        abortRef.current = null
+        setIsLoadingMessages(false)
+      })
   }
 
   function reveal(conversationId: string, history: ChatMessage[], reply: string) {
@@ -115,14 +141,17 @@ export function useChat() {
     const userMessage: ChatMessage = { id: crypto.randomUUID(), role: 'user', content }
     let conversationId = activeId
     let history: ChatMessage[]
+    let localId: string | null = null
 
     if (conversationId === null) {
-      // A conversation starts with its first message, so empty chats don't pile up.
-      conversationId = `local-${crypto.randomUUID()}`
+      // Show the new chat right away under a temporary id. It's created on the
+      // server below, so empty chats never pile up there.
+      localId = `local-${crypto.randomUUID()}`
+      conversationId = localId
       history = [userMessage]
-      const conversation = { id: conversationId, title: titleFrom(content), messages: history }
+      const conversation = { id: localId, title: titleFrom(content), messages: history }
       setConversations((current) => [conversation, ...current])
-      setActiveId(conversationId)
+      setActiveId(localId)
     } else {
       history = [...(activeConversation?.messages ?? []), userMessage]
       setMessages(conversationId, history)
@@ -135,7 +164,20 @@ export function useChat() {
     abortRef.current = controller
 
     try {
-      const reply = await sendToAida(history, controller.signal)
+      if (localId !== null) {
+        const created = await createConversation(titleFrom(content), controller.signal)
+        if (controller.signal.aborted) return
+        // Swap the temporary id for the server's id.
+        const serverId = String(created.id)
+        const replacedId = localId
+        setConversations((current) =>
+          current.map((c) => (c.id === replacedId ? { ...c, id: serverId, title: created.title } : c)),
+        )
+        setActiveId(serverId)
+        conversationId = serverId
+      }
+
+      const reply = await sendToAida(conversationId, content, controller.signal)
       if (controller.signal.aborted) return
       if (!reply) throw new Error('AIDA sent an empty reply.')
       abortRef.current = null

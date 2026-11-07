@@ -196,9 +196,12 @@
 }
 
 .chat-panel__composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
   width: min(100%, 780px);
   margin: 0 auto;
-  padding: 14px 19px;
+  padding: 10px 10px 10px 19px;
   border: 1px solid #34493a;
   border-radius: 16px;
   background: #1b2a20;
@@ -213,11 +216,12 @@
 .chat-panel__composer textarea {
   resize: none;
   display: block;
-  width: 100%;
-  min-height: 26px;
+  flex: 1;
+  min-width: 0;
+  min-height: 34px;
   max-height: 176px;
   margin: 0;
-  padding: 0;
+  padding: 4px 0;
   border: 0;
   background: transparent;
   color: #e8eeea;
@@ -229,6 +233,25 @@
 }
 .chat-panel__composer textarea::placeholder { color: #829788; }
 .chat-panel__composer textarea:disabled { opacity: .65; }
+
+.chat-panel__send {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: #b5a7dc;
+  color: #101713;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+.chat-panel__send svg { width: 18px; height: 18px; }
+.chat-panel__send:hover:not(:disabled) { background: #c6bbe6; }
+.chat-panel__send:focus-visible { outline: 2px solid #b5a7dc; outline-offset: 2px; }
+.chat-panel__send:disabled { background: #26362b; color: #6f8274; cursor: default; }
 
 @media (max-width: 760px) {
   .chat-panel__messages { padding: 84px 18px 28px; }

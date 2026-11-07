@@ -1,24 +1,17 @@
 import os
-
-from Agents.AidaAgent.AidaAgent import AidaAgent
-from Apps.Apps import Apps   
 from pathlib import Path
-from ContextManager.ContextManager import ContextManager
-from Database.Database import Database
+
+from Aida import Aida
 
 
 class CLI:
-    def __init__(self):
+    def __init__(self, aida):
         self.running = True
-        DATA_DIR = Path(os.environ["AIDA_DATA_DIR"])
-        self.database = Database(DATA_DIR / "data.db")
-        self.apps = Apps(self.database)
-        self.agent = AidaAgent(self.apps.tools())
-        self.context_manager = ContextManager(self.database, self.apps)
+        self.agent = aida.agent
+        self.context_manager = aida.context_manager
         self.current_conversation_id = None
         self.user_input = None
 
-        
     def start(self):
         self.load_conversations()
         print("Welcome to the AIDA CLI! Type 'exit' to quit.")
@@ -30,7 +23,7 @@ class CLI:
         else:
             self.current_conversation_id = self.user_input
             self.load_conversation()
-                
+
         while self.running:
             self.user_input = input("You: ")
 
@@ -53,15 +46,14 @@ class CLI:
                         summary,
                         metadata
                     )
-                    
-    
+
     def load_conversations(self):
         conversations = self.context_manager.get_conversations()
         if not conversations:
             return print("No conversations found.")
         for conversation in conversations:
             print(f"ID: {conversation['id']}, Title: {conversation['title']}, Created At: {conversation['created_at']}, Updated At: {conversation['updated_at']}")
-    
+
     def load_conversation(self):
         messages = self.context_manager.load_conversation(self.current_conversation_id)
         if not messages:
@@ -73,6 +65,7 @@ class CLI:
         title = input("Enter a title for the new conversation: ")
         self.context_manager.create_conversation(title)
         print(f"Conversation '{title}' created.")
-        
-cli = CLI()
-cli.start()
+
+
+if __name__ == "__main__":
+    CLI(Aida(Path(os.environ["AIDA_DATA_DIR"]))).start()

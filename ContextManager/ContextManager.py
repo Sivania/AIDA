@@ -18,6 +18,9 @@ class ContextManager:
     def load_conversation(self, conversation_id):
         return self.conversation_repository.get_conversation_messages(conversation_id)
     
+    def get_conversation(self, conversation_id):
+        return self.conversation_repository.get_conversation(conversation_id)
+
     def construct_context(self, conversation_id, prompt):
         messages = self.load_conversation(conversation_id)
         messages = [

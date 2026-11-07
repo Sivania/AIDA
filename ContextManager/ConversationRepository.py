@@ -34,12 +34,20 @@ class ConversationRepository:
             ORDER BY updated_at DESC
         """)
         
+    def get_conversation(self, conversation_id):
+        rows = self.database.execute_read("""
+            SELECT *
+            FROM conversations
+            WHERE id = ?
+        """, (conversation_id,))
+        return rows[0] if rows else None
+    
     def get_conversation_messages(self, conversation_id):
         return self.database.execute_read("""
             SELECT *
             FROM messages
             WHERE conversation_id = ?
-            ORDER BY created_at ASC
+            ORDER BY created_at ASC, id ASC
         """, (conversation_id,))
 
     def create_conversation(self, title: str = "New conversation"):
