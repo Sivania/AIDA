@@ -5,6 +5,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
-    proxy: { '/chat': 'http://localhost:8000' },
+    host: '127.0.0.1',
+    allowedHosts: ['.ts.net'],
+    proxy: { '/api': 'http://127.0.0.1:8000' },
   },
 })
