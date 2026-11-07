@@ -1,20 +1,9 @@
 :root {
-  --bg: #213b32;
-  --surface: #2a4a3f;
-  --code-bg: #182c25;
-  --border: #3d5f53;
-  --border-accent: #6f6a8f;
-  --text: #e8eee9;
-  --text-muted: #9fb3aa;
-  --accent: #b9a8e0;
-  --error: #ffb4b4;
-  --error-bg: #4a2a2a;
-
   color-scheme: dark;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   font-size: 15px;
-  color: var(--text);
-  background: var(--bg);
+  color: #e0e7e1;
+  background: #101713;
 }
 
 *,
@@ -25,5 +14,5 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: #101713;
 }

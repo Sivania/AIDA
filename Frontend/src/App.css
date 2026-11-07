@@ -1,214 +1,26 @@
-.app {
-  display: flex;
-  flex-direction: column;
+.app-shell {
+  width: 100%;
   height: 100dvh;
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
-
-/* Top bar */
-.topbar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 0;
+  overflow: hidden;
 }
 
-.wordmark {
-  font-weight: 600;
-  letter-spacing: 0.3em;
-  color: var(--accent);
-}
+.app-shell .chat-panel__open-sidebar { display: none; }
+.app-shell--collapsed .chat-panel__open-sidebar { display: grid; place-items: center; }
 
-.icon-button {
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: transparent;
-  color: var(--text);
-  font-size: 20px;
-  cursor: pointer;
-}
+.app-shell__scrim { display: none; }
 
-.icon-button:hover {
-  background: var(--surface);
-}
+@media (max-width: 760px) {
+  .app-shell .chat-panel__open-sidebar { display: grid; place-items: center; }
 
-/* Chat area */
-.chat {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.empty {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-}
-
-.logo {
-  width: 140px;
-  color: var(--accent);
-}
-
-.logo.small {
-  width: 22px;
-}
-
-.logo.thinking {
-  animation: breathe 1.4s ease-in-out infinite;
-}
-
-@keyframes breathe {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.85); opacity: 0.6; }
-}
-
-.suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-
-.suggestions button {
-  padding: 8px 14px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text-muted);
-  font: inherit;
-  cursor: pointer;
-}
-
-.suggestions button:hover {
-  background: var(--surface);
-  color: var(--text);
-}
-
-.messages {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 16px 0;
-}
-
-.message {
-  line-height: 1.55;
-  overflow-wrap: anywhere;
-}
-
-.message.user {
-  align-self: flex-end;
-  max-width: 80%;
-  padding: 10px 16px;
-  border-radius: 18px;
-  background: var(--surface);
-  white-space: pre-wrap;
-}
-
-.message.assistant p {
-  margin: 0 0 10px;
-}
-
-.message.assistant p:last-child {
-  margin-bottom: 0;
-}
-
-.message.assistant code {
-  padding: 1px 5px;
-  border-radius: 5px;
-  background: var(--code-bg);
-  font-size: 0.9em;
-}
-
-.message.assistant pre {
-  overflow-x: auto;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: var(--code-bg);
-}
-
-.message.assistant pre code {
-  padding: 0;
-  background: none;
-}
-
-.message.assistant table {
-  border-collapse: collapse;
-  margin: 8px 0;
-}
-
-.message.assistant th,
-.message.assistant td {
-  padding: 6px 10px;
-  border: 1px solid var(--border);
-  text-align: left;
-}
-
-.error {
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: var(--error-bg);
-  color: var(--error);
-}
-
-/* Input */
-.composer {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  margin-top: 8px;
-  padding: 8px 8px 8px 16px;
-  border: 1px solid var(--border-accent);
-  border-radius: 24px;
-  background: var(--surface);
-}
-
-.composer textarea {
-  flex: 1;
-  max-height: 200px;
-  padding: 8px 0;
-  border: none;
-  outline: none;
-  resize: none;
-  background: transparent;
-  color: var(--text);
-  font: inherit;
-  line-height: 1.5;
-}
-
-.composer textarea::placeholder {
-  color: var(--text-muted);
-}
-
-.send {
-  flex-shrink: 0;
-  width: 38px;
-  height: 38px;
-  border: none;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--bg);
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.send:disabled {
-  background: var(--border);
-  color: var(--text-muted);
-  cursor: default;
-}
-
-.status {
-  padding: 8px 0 12px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--text-muted);
+  .app-shell__scrim {
+    position: fixed;
+    z-index: 15;
+    inset: 0;
+    display: block;
+    width: 100%;
+    border: 0;
+    background: rgba(4, 12, 7, 0.68);
+    cursor: pointer;
+  }
 }

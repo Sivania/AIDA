@@ -1,0 +1,139 @@
+.sidebar {
+  position: relative;
+  width: 272px;
+  flex: 0 0 272px;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  background: #17231d;
+  border-right: 1px solid rgba(195, 218, 203, 0.07);
+  transition: width 280ms ease, flex-basis 280ms ease;
+  z-index: 10;
+}
+
+.sidebar--collapsed {
+  width: 0;
+  flex-basis: 0;
+  border-right: 0;
+}
+
+.sidebar__inner {
+  width: 272px;
+  height: 100%;
+  padding: 27px 15px 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 7px 33px;
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #e9ede9;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.24em;
+}
+
+.sidebar__brand .aida-logo { margin-left: -4px; }
+.sidebar__brand .aida-logo__core { stroke-width: 11; }
+
+.sidebar__icon-button {
+  border: 0;
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  background: transparent;
+  border-radius: 9px;
+  color: #92a79a;
+  cursor: pointer;
+}
+
+.sidebar__icon-button:hover,
+.sidebar__icon-button:focus-visible {
+  color: #dce5df;
+  background: rgba(232, 240, 232, 0.07);
+}
+
+.sidebar__icon-button svg { width: 19px; height: 19px; }
+
+.sidebar__new {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  height: 46px;
+  padding: 0 13px;
+  border: 1px solid rgba(197, 220, 203, 0.14);
+  border-radius: 11px;
+  background: rgba(232, 245, 234, 0.035);
+  color: #e2e9e4;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+.sidebar__new:hover { background: rgba(232, 245, 234, 0.095); }
+.sidebar__new svg { width: 17px; height: 17px; color: #b5a7dc; }
+
+.sidebar__conversations {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow-y: auto;
+  margin-top: 25px;
+  padding-right: 2px;
+}
+
+.sidebar__conversation {
+  flex: 0 0 auto;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  padding: 12px 13px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #a8b6ab;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.sidebar__conversation:hover { background: #223128; color: #e2e9e4; }
+.sidebar__conversation--active { background: #29392f; color: #f0f2ee; }
+.sidebar__conversation--active:hover { background: #2e4135; }
+
+@media (max-width: 760px) {
+  .sidebar {
+    position: fixed;
+    z-index: 20;
+    inset: 0 auto 0 0;
+    height: 100dvh;
+    width: 272px;
+    flex: none;
+    transform: translateX(-100%);
+    transition: transform 250ms ease;
+    box-shadow: 10px 0 45px rgba(0, 0, 0, 0.20);
+  }
+  .sidebar--mobile-open,
+  .sidebar--mobile-open.sidebar--collapsed {
+    width: 272px;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar { transition: none; }
+}

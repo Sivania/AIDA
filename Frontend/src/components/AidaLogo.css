@@ -1,0 +1,105 @@
+.aida-logo {
+  --logo-stroke: #b5a7dc;
+  flex: none;
+  aspect-ratio: 260 / 220;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 550ms ease;
+}
+
+.aida-logo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.aida-logo__core,
+.aida-logo__wave {
+  transform-box: fill-box;
+  transform-origin: center;
+  fill: none;
+  stroke: var(--logo-stroke);
+  stroke-linejoin: miter;
+  stroke-linecap: square;
+}
+
+.aida-logo__core {
+  stroke-width: 6;
+}
+
+.aida-logo__wave {
+  stroke-width: 3.5;
+  opacity: 0;
+  stroke-linejoin: round;
+}
+
+/* A slow, noticeable breath. */
+.aida-logo--idle .aida-logo__core,
+.aida-logo--responding .aida-logo__core {
+  animation: aida-breathe 3.5s ease-in-out infinite;
+}
+
+/* One revolution over ~2 seconds; then hold still until the next cycle. */
+.aida-logo--thinking .aida-logo__core {
+  animation: aida-think 4.2s linear infinite;
+}
+
+/* Three staggered rings drawn in the same triangle geometry. */
+.aida-logo--responding .aida-logo__wave {
+  animation: aida-wave 2.5s ease-out infinite;
+}
+
+.aida-logo--responding .aida-logo__wave--2 {
+  animation-delay: 0.8s;
+}
+
+.aida-logo--responding .aida-logo__wave--3 {
+  animation-delay: 1.6s;
+}
+
+/* Keep AIDA visible, but behind readable chat messages. */
+.aida-logo--faded {
+  opacity: 0.12;
+}
+
+.aida-logo--static .aida-logo__core,
+.aida-logo--static .aida-logo__wave {
+  animation: none !important;
+}
+
+.aida-logo--static .aida-logo__core {
+  opacity: 1;
+  transform: none;
+}
+
+.aida-logo--static .aida-logo__wave {
+  opacity: 0;
+}
+
+@keyframes aida-breathe {
+  0%, 100% { transform: scale(0.91); opacity: 0.68; }
+  50% { transform: scale(1.09); opacity: 1; }
+}
+
+@keyframes aida-think {
+  0%, 7% { transform: rotate(0deg) scale(1); }
+  17% { transform: rotate(75deg) scale(0.86); }
+  29% { transform: rotate(190deg) scale(0.70); }
+  41% { transform: rotate(310deg) scale(1.19); }
+  50%, 100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes aida-wave {
+  0% { transform: scale(0.97); opacity: 0; }
+  12% { opacity: 0.66; }
+  40% { opacity: 0.38; }
+  100% { transform: scale(1.52); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aida-logo__core, .aida-logo__wave { animation: none !important; }
+  .aida-logo__core { opacity: 1 !important; }
+  .aida-logo__wave { opacity: 0 !important; }
+  .aida-logo { transition: none; }
+}

@@ -2,3 +2,5 @@ python-dotenv
 langchain
 langchain-openai
 pytest
+fastapi
+uvicorn
